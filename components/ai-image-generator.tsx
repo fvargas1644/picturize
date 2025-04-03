@@ -73,28 +73,9 @@ export function AIImageGenerator() {
       // Simulamos la llamada a la API con un timeout
       await new Promise((resolve) => setTimeout(resolve, 3000))
 
-      // En una implementación real, aquí iría la llamada a la API
-      // const formData = new FormData();
-      // formData.append('prompt', prompt);
-      // formData.append('model', selectedModel.id);
-      // formData.append('style', selectedStyle.id);
-      //
-      // if (uploadedImage) {
-      //   // Convertir la URL de la imagen a un blob y añadirlo al formData
-      //   const response = await fetch(uploadedImage);
-      //   const blob = await response.blob();
-      //   formData.append('reference_image', blob);
-      // }
-      //
-      // const response = await fetch('https://api.example.com/generate', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Authorization': `Bearer ${apiKey}`
-      //   },
-      //   body: formData
-      // });
+      // const response = await fetchApi(props)
 
-      // Para esta demo, usamos una imagen de placeholder
+      // Demo: usamos una imagen de placeholder
       const width = selectedSize.id.split("x")[0]
       const height = selectedSize.id.split("x")[1]
       setGeneratedImage(`/placeholder.svg?height=${height}&width=${width}`)
