@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useRef } from "react"
 import { useTheme } from "@/contexts/theme-context"
 import { Loader2, ImageIcon, Lock, Wand2, ChevronDown, Check } from "lucide-react"
