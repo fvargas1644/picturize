@@ -5,6 +5,7 @@ import { useState, useRef } from "react"
 import { useTheme } from "@/contexts/theme-context"
 import { Loader2, ImageIcon, Lock, Wand2, ChevronDown, Check } from "lucide-react"
 import Image from "next/image"
+import { convertImageToPixels } from "@/lib/utils"
 
 // Modelos de IA disponibles
 const AI_MODELS = [
@@ -47,6 +48,7 @@ export function AIImageGenerator() {
   const [showModelDropdown, setShowModelDropdown] = useState(false)
   const [showSizeDropdown, setShowSizeDropdown] = useState(false)
   const [showStyleDropdown, setShowStyleDropdown] = useState(false)
+  const [pixelData, setPixelData] = useState(null);
 
   // Referencias para los dropdowns
   const modelDropdownRef = useRef<HTMLDivElement>(null)
@@ -69,10 +71,12 @@ export function AIImageGenerator() {
     setIsGenerating(true)
 
     try {
-      // Simulamos la llamada a la API con un timeout
-      await new Promise((resolve) => setTimeout(resolve, 3000))
 
       // const response = await fetchApi(props)
+      if (uploadedImage) {
+        const pixels = convertImageToPixels(uploadedImage)
+        console.log(pixels )
+      }
 
       // Demo: usamos una imagen de placeholder
       const width = selectedSize.id.split("x")[0]
@@ -87,19 +91,22 @@ export function AIImageGenerator() {
   }
 
   // Función para manejar la carga de imágenes
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
       // Validar que sea una imagen
       if (!file.type.startsWith("image/")) {
         setError("El archivo debe ser una imagen (jpg, png, etc.)")
         return
+      } else {
+        const blob = new Blob([file], { type: file.type });
+        const imageUrl = URL.createObjectURL(blob)
+
+        setUploadedImage(imageUrl)
+        setError(null)
       }
 
-      // Crear URL para la vista previa
-      const imageUrl = URL.createObjectURL(file)
-      setUploadedImage(imageUrl)
-      setError(null)
+      
     }
   }
 
