@@ -16,7 +16,7 @@ export async function convertImageToPixels(arrayBuffer: any){
       const r = data[i];       // Red
       const g = data[i + 1];   // Green
       const b = data[i + 2];   // Blue
-      pixels.push({ r, g, b });
+      pixels.push([r, g, b ]);
     } 
 
     return pixels;

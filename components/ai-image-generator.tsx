@@ -6,6 +6,7 @@ import { useTheme } from "@/contexts/theme-context"
 import { Loader2, ImageIcon, Lock, Wand2, ChevronDown, Check } from "lucide-react"
 import Image from "next/image"
 import { convertImageToPixels } from "@/lib/sharp"
+import kmeans from "@/lib/k-means"
 
 // Modelos de IA disponibles
 const AI_MODELS = [
@@ -48,12 +49,20 @@ export function AIImageGenerator() {
   const [showModelDropdown, setShowModelDropdown] = useState(false)
   const [showSizeDropdown, setShowSizeDropdown] = useState(false)
   const [showStyleDropdown, setShowStyleDropdown] = useState(false)
-  const [pixelData, setPixelData] = useState(null);
 
   // Referencias para los dropdowns
   const modelDropdownRef = useRef<HTMLDivElement>(null)
   const sizeDropdownRef = useRef<HTMLDivElement>(null)
   const styleDropdownRef = useRef<HTMLDivElement>(null)
+
+  // Función para generar paleta
+  const extractImageColorPalette = async () => {
+    const image = await fetch(uploadedImage)
+    const blob = await image.blob();
+    const arrayBuffer =await  blob.arrayBuffer();
+    const array = await convertImageToPixels(arrayBuffer)
+    const { centroids} = kmeans(array, 4)
+  }
 
   // Función para generar imagen (simulada)
   const generateImage = async () => {
@@ -74,13 +83,7 @@ export function AIImageGenerator() {
 
       // const response = await fetchApi(props)
       if (uploadedImage) {
-        const image = await fetch(uploadedImage)
-        const blob = await image.blob();
-        const arrayBuffer =await  blob.arrayBuffer();
-
-        const  array = await convertImageToPixels(arrayBuffer)
-
-        console.log(array)
+        await extractImageColorPalette()
       }
 
       // Demo: usamos una imagen de placeholder
@@ -105,7 +108,7 @@ export function AIImageGenerator() {
         setError("El archivo debe ser una imagen (jpg, png, etc.)")
         return
       } else if(file.size >= maxSize){
-        setError("El archivo debe ser menor a 1MB")
+        setError("El archivo debe pesar menos de 1MB")
         return
       } else {
         const imageUrl = URL.createObjectURL(file)
