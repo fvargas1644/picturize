@@ -5,7 +5,7 @@ import { useState, useRef } from "react"
 import { useTheme } from "@/contexts/theme-context"
 import { Loader2, ImageIcon, Lock, Wand2, ChevronDown, Check } from "lucide-react"
 import Image from "next/image"
-import { convertImageToPixels } from "@/lib/utils"
+import { convertImageToPixels } from "@/lib/sharp"
 
 // Modelos de IA disponibles
 const AI_MODELS = [
@@ -74,8 +74,13 @@ export function AIImageGenerator() {
 
       // const response = await fetchApi(props)
       if (uploadedImage) {
-        const pixels = convertImageToPixels(uploadedImage)
-        console.log(pixels )
+        const image = await fetch(uploadedImage)
+        const blob = await image.blob();
+        const arrayBuffer =await  blob.arrayBuffer();
+
+        const  array = await convertImageToPixels(arrayBuffer)
+
+        console.log(array)
       }
 
       // Demo: usamos una imagen de placeholder
@@ -93,14 +98,17 @@ export function AIImageGenerator() {
   // Función para manejar la carga de imágenes
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
+    const maxSize = 1 * 1024 * 1024;
     if (file) {
       // Validar que sea una imagen
       if (!file.type.startsWith("image/")) {
         setError("El archivo debe ser una imagen (jpg, png, etc.)")
         return
+      } else if(file.size >= maxSize){
+        setError("El archivo debe ser menor a 1MB")
+        return
       } else {
-        const blob = new Blob([file], { type: file.type });
-        const imageUrl = URL.createObjectURL(blob)
+        const imageUrl = URL.createObjectURL(file)
 
         setUploadedImage(imageUrl)
         setError(null)
