@@ -7,6 +7,7 @@ import { Loader2, ImageIcon, Lock, Wand2, ChevronDown, Check } from "lucide-reac
 import Image from "next/image"
 import { convertImageToPixels } from "@/lib/sharp"
 import kmeans from "@/lib/k-means"
+import { generateImageOpenAI } from "@/lib/fetching"
 
 // Modelos de IA disponibles
 const AI_MODELS = [
@@ -62,6 +63,9 @@ export function AIImageGenerator() {
     const arrayBuffer =await  blob.arrayBuffer();
     const array = await convertImageToPixels(arrayBuffer)
     const { centroids} = kmeans(array, 4)
+    console.log(centroids)
+
+    await generateImageOpenAI()
   }
 
   // Función para generar imagen (simulada)
